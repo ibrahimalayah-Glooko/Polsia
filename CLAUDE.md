@@ -8,7 +8,6 @@ Polsia is a self-hosted, autonomous AI platform that runs a company's operations
 
 **Unit tests** (no Docker, no Claude credentials needed):
 ```bash
-cd backend
 CLAUDE_CLI_MOCK=true python -m pytest tests/unit/ -v
 ```
 
@@ -25,7 +24,6 @@ npm test -- --watchAll=false
 
 **Integration tests** (testcontainers spins up Postgres + Redis automatically):
 ```bash
-cd backend
 CLAUDE_CLI_MOCK=true python -m pytest tests/integration/ -v -m integration
 ```
 

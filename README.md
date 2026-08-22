@@ -111,7 +111,6 @@ make reset-db        # Drop and recreate schema
 ### Running tests locally (no Claude credentials needed)
 
 ```bash
-cd backend
 CLAUDE_CLI_MOCK=true pytest tests/unit/ -v --cov=app
 ```
 
@@ -121,30 +120,29 @@ The `CLAUDE_CLI_MOCK=true` flag makes all agents return a mock response without 
 
 ```
 polsia/
-├── backend/
-│   ├── app/
-│   │   ├── agents/          # 9 agent implementations
-│   │   │   ├── base_agent.py        # call_claude() subprocess wrapper
-│   │   │   ├── crew_factory.py      # AGENT_MAP registry
-│   │   │   ├── orchestrator/
-│   │   │   ├── social_media/
-│   │   │   ├── competitor_research/
-│   │   │   ├── business_planning/
-│   │   │   ├── email_outreach/
-│   │   │   ├── customer_support/
-│   │   │   ├── ads_management/
-│   │   │   ├── code_generation/
-│   │   │   └── finance/
-│   │   ├── api/v1/          # REST endpoints + WebSocket
-│   │   ├── core/            # DB, Redis, ChromaDB, security, retry
-│   │   ├── models/          # SQLAlchemy ORM (15 tables)
-│   │   ├── schemas/         # Pydantic request/response models
-│   │   └── services/        # Business logic layer
-│   ├── celery_app/          # Celery worker, Beat schedule, tasks
-│   ├── alembic/             # Database migrations
-│   └── tests/
-│       ├── unit/            # SQLite in-memory, CLAUDE_CLI_MOCK=true
-│       └── integration/     # Testcontainers (real Postgres + Redis)
+├── app/
+│   ├── agents/          # 9 agent implementations
+│   │   ├── base_agent.py        # call_claude() subprocess wrapper
+│   │   ├── crew_factory.py      # AGENT_MAP registry
+│   │   ├── orchestrator/
+│   │   ├── social_media/
+│   │   ├── competitor_research/
+│   │   ├── business_planning/
+│   │   ├── email_outreach/
+│   │   ├── customer_support/
+│   │   ├── ads_management/
+│   │   ├── code_generation/
+│   │   └── finance/
+│   ├── api/v1/          # REST endpoints + WebSocket
+│   ├── core/            # DB, Redis, ChromaDB, security, retry
+│   ├── models/          # SQLAlchemy ORM (15 tables)
+│   ├── schemas/         # Pydantic request/response models
+│   └── services/        # Business logic layer
+├── celery_app/          # Celery worker, Beat schedule, tasks
+├── alembic/             # Database migrations
+├── tests/
+│   ├── unit/            # SQLite in-memory, CLAUDE_CLI_MOCK=true
+│   └── integration/     # Testcontainers (real Postgres + Redis)
 ├── frontend/
 │   └── src/
 │       ├── app/             # Next.js 14 pages (9 routes)
