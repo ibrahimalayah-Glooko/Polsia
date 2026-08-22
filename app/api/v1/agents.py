@@ -13,7 +13,9 @@ from app.services.task_service import (
     list_tasks,
 )
 
-AgentTypeEnum = Enum("AgentTypeEnum", {name: name for name in VALID_AGENT_TYPES}, type=str)
+AgentTypeEnum = Enum(  # type: ignore[misc]
+    "AgentTypeEnum", {name: name for name in VALID_AGENT_TYPES}, type=str
+)
 
 router = APIRouter(dependencies=[Depends(verify_api_key)])
 

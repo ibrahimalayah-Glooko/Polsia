@@ -67,7 +67,7 @@ async def stripe_webhook(request: Request, db: AsyncSession = Depends(get_db)):
 
     try:
         event = stripe.Webhook.construct_event(payload, sig_header, settings.stripe_webhook_secret)
-    except (ValueError, stripe.error.SignatureVerificationError) as exc:
+    except (ValueError, stripe.SignatureVerificationError) as exc:
         raise HTTPException(status_code=400, detail=f"Invalid Stripe signature: {exc}") from exc
 
     data = event.get("data", {}).get("object", {}) if isinstance(event, dict) else event["data"]["object"]

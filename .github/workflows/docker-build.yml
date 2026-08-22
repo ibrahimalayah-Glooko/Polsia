@@ -1,0 +1,39 @@
+name: Docker Build
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copy env file
+        run: cp .env.example .env
+      - name: Build all images
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml build
+      - name: Start the stack
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d
+      - name: Health-check the backend
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:8000/api/v1/health; then exit 0; fi
+            sleep 5
+          done
+          echo "Backend did not become healthy in time" >&2
+          exit 1
+      - name: Health-check the frontend
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:3000; then exit 0; fi
+            sleep 5
+          done
+          echo "Frontend did not become healthy in time" >&2
+          exit 1
+      - name: Dump logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml logs
+      - name: Tear down the stack
+        if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.ci.yml down -v
