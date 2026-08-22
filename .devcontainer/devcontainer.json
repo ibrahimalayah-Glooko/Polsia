@@ -1,0 +1,28 @@
+{
+  "name": "Polsia (backend)",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "backend",
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose",
+  "remoteUser": "root",
+  "postCreateCommand": "pip install --no-cache-dir -r requirements-dev.txt",
+  "forwardPorts": [80, 8000],
+  "portsAttributes": {
+    "80": { "label": "Polsia (nginx)" },
+    "8000": { "label": "Backend (uvicorn)" }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "charliermarsh.ruff",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": ["tests"]
+      }
+    }
+  }
+}

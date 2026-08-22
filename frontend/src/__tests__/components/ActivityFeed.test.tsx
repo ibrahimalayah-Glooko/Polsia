@@ -22,6 +22,7 @@ const MockWebSocket = jest.fn().mockImplementation(() => {
   };
   return mockWsInstance;
 });
+MockWebSocket.OPEN = 1;
 
 (global as any).WebSocket = MockWebSocket;
 

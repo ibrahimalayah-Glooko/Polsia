@@ -9,12 +9,14 @@ def run_morning_cycle():
     """06:00 UTC — Finance snapshot + Orchestrator morning plan."""
     async def _inner():
         from datetime import date
-        from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+
+        from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
+        from app.agents.crew_factory import run_agent_for_task
         from app.config import settings
+        from app.services.activity_service import log_activity
         from app.services.company_service import get_full_context
         from app.services.task_service import create_task
-        from app.services.activity_service import log_activity
-        from app.agents.crew_factory import run_agent_for_task
 
         engine = create_async_engine(settings.database_url)
         Session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
@@ -73,15 +75,16 @@ def run_evening_cycle():
     """20:00 UTC — Finance P&L + Orchestrator evening summary."""
     async def _inner():
         from datetime import date
+
         from sqlalchemy import func, select
-        from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+        from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
+        from app.agents.crew_factory import run_agent_for_task
         from app.config import settings
         from app.models.task import Task
-        from app.services.company_service import get_full_context
-        from app.services.task_service import create_task
-        from app.services.report_service import save_evening_summary
         from app.services.activity_service import log_activity
-        from app.agents.crew_factory import run_agent_for_task
+        from app.services.company_service import get_full_context
+        from app.services.report_service import save_evening_summary
 
         engine = create_async_engine(settings.database_url)
         Session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)

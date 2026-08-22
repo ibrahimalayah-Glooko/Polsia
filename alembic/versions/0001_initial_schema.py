@@ -8,7 +8,6 @@ from typing import Sequence, Union
 
 import sqlalchemy as sa
 from alembic import op
-from sqlalchemy.dialects import postgresql
 
 revision: str = "0001"
 down_revision: Union[str, None] = None
@@ -26,9 +25,9 @@ def upgrade() -> None:
         sa.Column("description", sa.Text()),
         sa.Column("target_market", sa.Text()),
         sa.Column("value_prop", sa.Text()),
-        sa.Column("pricing_model", postgresql.JSONB()),
-        sa.Column("goals", postgresql.JSONB()),
-        sa.Column("kpis", postgresql.JSONB()),
+        sa.Column("pricing_model", sa.JSON()),
+        sa.Column("goals", sa.JSON()),
+        sa.Column("kpis", sa.JSON()),
         sa.Column("website_url", sa.String(512)),
         sa.Column("github_repo", sa.String(512)),
         sa.Column("product_type", sa.String(100)),
@@ -51,7 +50,7 @@ def upgrade() -> None:
         sa.Column("scheduled_date", sa.DateTime(timezone=True)),
         sa.Column("result_summary", sa.Text()),
         sa.Column("error_message", sa.Text()),
-        sa.Column("metadata", postgresql.JSONB()),
+        sa.Column("metadata", sa.JSON()),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
         sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
     )
@@ -63,8 +62,8 @@ def upgrade() -> None:
         sa.Column("agent_type", sa.String(100), nullable=False),
         sa.Column("run_type", sa.String(100), server_default="task"),
         sa.Column("status", sa.String(50), server_default="running"),
-        sa.Column("input_context", postgresql.JSONB()),
-        sa.Column("output", postgresql.JSONB()),
+        sa.Column("input_context", sa.JSON()),
+        sa.Column("output", sa.JSON()),
         sa.Column("raw_log", sa.Text()),
         sa.Column("tokens_used", sa.Integer()),
         sa.Column("cost_usd", sa.Float()),
@@ -79,7 +78,7 @@ def upgrade() -> None:
         sa.Column("agent_type", sa.String(100), nullable=False),
         sa.Column("action", sa.String(255), nullable=False),
         sa.Column("summary", sa.Text(), nullable=False),
-        sa.Column("detail", postgresql.JSONB()),
+        sa.Column("detail", sa.JSON()),
         sa.Column("level", sa.String(20), server_default="info"),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
     )
@@ -91,7 +90,7 @@ def upgrade() -> None:
         sa.Column("title", sa.String(512), nullable=False),
         sa.Column("content", sa.Text(), nullable=False),
         sa.Column("source", sa.String(100)),
-        sa.Column("tags", postgresql.ARRAY(sa.String())),
+        sa.Column("tags", sa.JSON()),
         sa.Column("chroma_id", sa.String(255), unique=True),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
     )
@@ -105,7 +104,7 @@ def upgrade() -> None:
         sa.Column("tweet_id", sa.String(100)),
         sa.Column("scheduled_for", sa.DateTime(timezone=True)),
         sa.Column("published_at", sa.DateTime(timezone=True)),
-        sa.Column("engagement", postgresql.JSONB()),
+        sa.Column("engagement", sa.JSON()),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
     )
 
@@ -195,10 +194,10 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), primary_key=True),
         sa.Column("name", sa.String(255), nullable=False),
         sa.Column("website", sa.String(512)),
-        sa.Column("pricing_info", postgresql.JSONB()),
+        sa.Column("pricing_info", sa.JSON()),
         sa.Column("positioning", sa.Text()),
-        sa.Column("strengths", postgresql.ARRAY(sa.String())),
-        sa.Column("weaknesses", postgresql.ARRAY(sa.String())),
+        sa.Column("strengths", sa.JSON()),
+        sa.Column("weaknesses", sa.JSON()),
         sa.Column("last_researched", sa.DateTime(timezone=True)),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
     )
@@ -212,7 +211,7 @@ def upgrade() -> None:
         sa.Column("amount_cents", sa.Integer()),
         sa.Column("currency", sa.String(10)),
         sa.Column("status", sa.String(50), server_default="processed"),
-        sa.Column("raw_payload", postgresql.JSONB()),
+        sa.Column("raw_payload", sa.JSON()),
         sa.Column("processed_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
     )
 
@@ -252,8 +251,8 @@ def upgrade() -> None:
         sa.Column("tasks_planned", sa.Integer(), server_default="0"),
         sa.Column("tasks_completed", sa.Integer(), server_default="0"),
         sa.Column("tasks_failed", sa.Integer(), server_default="0"),
-        sa.Column("metrics_snapshot", postgresql.JSONB()),
-        sa.Column("insights", postgresql.ARRAY(sa.String())),
+        sa.Column("metrics_snapshot", sa.JSON()),
+        sa.Column("insights", sa.JSON()),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
         sa.Column("updated_at", sa.DateTime(timezone=True), server_default=sa.func.now()),
     )

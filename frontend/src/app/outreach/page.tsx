@@ -2,6 +2,9 @@ import { api } from "@/lib/api";
 
 type Prospect = { id: number; email: string; first_name: string | null; company: string | null; status: string; created_at: string };
 
+// Fetches live data from the backend on every request instead of at build time.
+export const dynamic = "force-dynamic";
+
 async function getProspects() {
   try { return await api.get<Prospect[]>("/outreach/prospects?limit=100"); } catch { return []; }
 }

@@ -24,8 +24,8 @@ export default function AgentsPage() {
     setTriggering(agentType);
     setMessage(null);
     try {
-      const result = await api.post<{ message: string }>(`/agents/${agentType}/trigger`);
-      setMessage(result.message);
+      const result = await api.post<{ status: string; task_id: number }>(`/agents/${agentType}/trigger`);
+      setMessage(`Queued task #${result.task_id} for ${agentType.replace(/_/g, " ")}.`);
     } catch (e) {
       setMessage(String(e));
     } finally {

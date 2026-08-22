@@ -14,6 +14,7 @@ const MockWebSocket = jest.fn().mockImplementation(() => {
   mockWsInstance = { onopen: null, onmessage: null, onclose: null, onerror: null, close: jest.fn(), readyState: 0 };
   return mockWsInstance;
 });
+MockWebSocket.OPEN = 1;
 
 (global as any).WebSocket = MockWebSocket;
 

@@ -16,12 +16,18 @@ def run_agent_task(self, task_id: int):
     import asyncio
 
     async def _execute():
-        from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-        from app.config import settings
+        from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
         from app.agents.crew_factory import run_agent_for_task
-        from app.services.task_service import get_task, update_task_status, create_agent_run, finish_agent_run
-        from app.services.company_service import get_full_context
+        from app.config import settings
         from app.services.activity_service import log_activity
+        from app.services.company_service import get_full_context
+        from app.services.task_service import (
+            create_agent_run,
+            finish_agent_run,
+            get_task,
+            update_task_status,
+        )
 
         engine = create_async_engine(settings.database_url)
         Session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
@@ -54,6 +60,53 @@ def run_agent_task(self, task_id: int):
         async with Session() as db:
             await update_task_status(db, task_id, status, result_summary=summary, error_message=error)
             await finish_agent_run(db, run.id, status, output=result, duration_secs=duration)
+
+            if status == "completed" and result.get("social_post"):
+                from app.services.social_service import create_post
+
+                await create_post(db, **result["social_post"])
+
+            if status == "completed" and result.get("ad_campaigns"):
+                from app.services.ads_service import create_campaign
+
+                for campaign in result["ad_campaigns"]:
+                    await create_campaign(db, **campaign)
+
+            if status == "completed" and result.get("business_ideas"):
+                from app.services.memory_service import store_memory
+
+                for idea in result["business_ideas"]:
+                    content = idea.get("rationale") or idea.get("expected_impact") or idea["title"]
+                    await store_memory(
+                        db,
+                        category="business_idea",
+                        title=idea["title"],
+                        content=content,
+                        source="business_planning",
+                    )
+
+            if status == "completed" and result.get("competitors"):
+                from app.services.competitor_service import upsert_competitor
+
+                for competitor in result["competitors"]:
+                    await upsert_competitor(db, **competitor)
+
+            if status == "completed" and result.get("revenue_snapshot"):
+                from app.services.finance_service import upsert_todays_snapshot
+
+                await upsert_todays_snapshot(db, **result["revenue_snapshot"])
+
+            if status == "completed" and result.get("prospects"):
+                from app.services.outreach_service import upsert_prospect
+
+                for prospect in result["prospects"]:
+                    await upsert_prospect(db, **prospect)
+
+            if status == "completed" and result.get("website"):
+                from app.services.company_service import set_website_url
+
+                await set_website_url(db, result["website"]["url"])
+
             await log_activity(
                 db,
                 agent_type=task.agent_type,
@@ -89,7 +142,8 @@ def run_ads_stripe_sync():
 
 def _create_and_run(agent_type: str, title: str):
     async def _inner():
-        from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+        from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+
         from app.config import settings
         from app.services.task_service import create_task
 

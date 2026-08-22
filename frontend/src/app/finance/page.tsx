@@ -1,6 +1,9 @@
 import { MetricsCard } from "@/components/dashboard/MetricsCard";
 import { api, type FinanceSummary } from "@/lib/api";
 
+// Fetches live data from the backend on every request instead of at build time.
+export const dynamic = "force-dynamic";
+
 async function getFinanceSummary(): Promise<FinanceSummary | null> {
   try {
     return await api.get<FinanceSummary>("/finance/summary");

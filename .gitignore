@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+
+# Node / Next.js
+node_modules/
+frontend/.next/
+frontend/out/
+frontend/coverage/
+npm-debug.log*
+
+# Env / secrets
+.env
+!.env.example
+
+# Data / local runtime state
+data/
+*.sqlite3
+
+# OS / editor
+.DS_Store
+.vscode/*
+!.vscode/extensions.json

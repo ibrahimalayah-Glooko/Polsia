@@ -1,5 +1,8 @@
 import { api, type Task } from "@/lib/api";
 
+// Fetches live data from the backend on every request instead of at build time.
+export const dynamic = "force-dynamic";
+
 async function getTasks(): Promise<Task[]> {
   try {
     return await api.get<Task[]>("/tasks?limit=100");

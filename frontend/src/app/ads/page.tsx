@@ -2,6 +2,9 @@ import { api } from "@/lib/api";
 
 type Campaign = { id: number; platform: string; name: string; status: string; daily_budget_usd: number; total_spent_usd: number };
 
+// Fetches live data from the backend on every request instead of at build time.
+export const dynamic = "force-dynamic";
+
 async function getCampaigns() {
   try { return await api.get<Campaign[]>("/ads/campaigns"); } catch { return []; }
 }

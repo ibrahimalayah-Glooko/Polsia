@@ -1,9 +1,15 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost";
+// Server Components run inside the container itself, so "localhost" would hit the
+// frontend container, not nginx/backend — use the internal Docker service URL instead.
+const API_URL =
+  typeof window === "undefined"
+    ? (process.env.API_INTERNAL_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost")
+    : (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost");
 const API_KEY = process.env.NEXT_PUBLIC_API_KEY ?? "";
 
 async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_URL}/api/v1${path}`, {
     ...options,
+    cache: "no-store",
     headers: {
       "Content-Type": "application/json",
       "X-API-Key": API_KEY,

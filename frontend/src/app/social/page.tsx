@@ -2,6 +2,9 @@ import { api } from "@/lib/api";
 
 type Post = { id: number; content: string; status: string; published_at: string | null; engagement: Record<string, number> | null };
 
+// Fetches live data from the backend on every request instead of at build time.
+export const dynamic = "force-dynamic";
+
 async function getPosts() {
   try { return await api.get<Post[]>("/social/posts?limit=50"); } catch { return []; }
 }
