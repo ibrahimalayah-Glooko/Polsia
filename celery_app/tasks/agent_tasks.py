@@ -124,8 +124,6 @@ def run_agent_task(self, task_id: int):
 @app.task(name="celery_app.tasks.agent_tasks.run_social_sweep")
 def run_social_sweep():
     """Sweep social mentions every 2h."""
-    from celery_app.tasks.agent_tasks import run_agent_task
-    run_agent_task.delay_with_id = None  # placeholder — create task then enqueue
     _create_and_run("social_media", "Check social mentions and reply to engaging comments")
 
 
