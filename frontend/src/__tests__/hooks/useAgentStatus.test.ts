@@ -1,4 +1,4 @@
-import { act, renderHook } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { useAgentStatus } from "@/hooks/useAgentStatus";
 
 const mockStatuses = [
@@ -25,7 +25,7 @@ afterEach(() => {
 
 describe("useAgentStatus", () => {
   it("starts in loading state", () => {
-    mockApiGet.mockResolvedValue([]);
+    mockApiGet.mockImplementation(() => new Promise(() => {}));
     const { result } = renderHook(() => useAgentStatus());
     expect(result.current.loading).toBe(true);
     expect(result.current.statuses).toEqual([]);
@@ -35,9 +35,8 @@ describe("useAgentStatus", () => {
     mockApiGet.mockResolvedValue(mockStatuses);
     const { result } = renderHook(() => useAgentStatus());
 
-    await act(async () => {});
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
-    expect(result.current.loading).toBe(false);
     expect(result.current.statuses).toEqual(mockStatuses);
     expect(result.current.error).toBeNull();
   });
@@ -46,23 +45,22 @@ describe("useAgentStatus", () => {
     mockApiGet.mockResolvedValue(mockStatuses);
     renderHook(() => useAgentStatus(5000));
 
-    await act(async () => {});
+    await waitFor(() => expect(mockApiGet).toHaveBeenCalledTimes(1));
     expect(mockApiGet).toHaveBeenCalledTimes(1);
 
     await act(async () => { jest.advanceTimersByTime(5000); });
-    expect(mockApiGet).toHaveBeenCalledTimes(2);
+    await waitFor(() => expect(mockApiGet).toHaveBeenCalledTimes(2));
 
     await act(async () => { jest.advanceTimersByTime(5000); });
-    expect(mockApiGet).toHaveBeenCalledTimes(3);
+    await waitFor(() => expect(mockApiGet).toHaveBeenCalledTimes(3));
   });
 
   it("sets error on fetch failure", async () => {
     mockApiGet.mockRejectedValue(new Error("Network error"));
     const { result } = renderHook(() => useAgentStatus());
 
-    await act(async () => {});
+    await waitFor(() => expect(result.current.loading).toBe(false));
 
-    expect(result.current.loading).toBe(false);
     expect(result.current.error).toContain("Network error");
   });
 
@@ -70,7 +68,7 @@ describe("useAgentStatus", () => {
     mockApiGet.mockResolvedValue(mockStatuses);
     const { unmount } = renderHook(() => useAgentStatus(1000));
 
-    await act(async () => {});
+    await waitFor(() => expect(mockApiGet).toHaveBeenCalledTimes(1));
     expect(mockApiGet).toHaveBeenCalledTimes(1);
 
     unmount();
