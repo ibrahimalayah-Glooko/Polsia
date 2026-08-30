@@ -6,6 +6,8 @@ services:
     environment:
       CLAUDE_CLI_MOCK: "true"
       SANDBOX_MODE: "true"
+    ports:
+      - "8000:8000"
     volumes:
       - chroma_data:/app/data/chroma
     # Remove ~/.claude mount — not available in CI
@@ -28,6 +30,8 @@ services:
     environment:
       NEXT_PUBLIC_API_URL: "http://backend:8000"
       NEXT_PUBLIC_WS_URL: "ws://backend:8000"
+    ports:
+      - "3000:3000"
 
   nginx:
     profiles: ["disabled"]  # Excluded in CI
